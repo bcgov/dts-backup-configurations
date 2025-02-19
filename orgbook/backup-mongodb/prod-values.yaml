@@ -1,0 +1,80 @@
+# Default values for backup-storage.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+
+image:
+  repository: bcgovimages/backup-container-mongo
+  pullPolicy: IfNotPresent
+  tag: 2.9
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: "backup-mongodb"
+
+backupConfig: |
+  mongo=orgbook-publisher-mongodb-headless:27017/orgbook-publisher
+
+  0 1 * * * default ./backup.sh -s
+  0 4 * * * default ./backup.sh -s -v all
+
+config:
+  []
+  # - filename: 60-tweaks.cnf
+  #   mountPath: /etc/my.cnf.d/60-tweaks.cnf
+  #   contents: |
+  #     [mysqld]
+  #     innodb_page_size=32k
+
+# Empty db section to avoid secrets from being created/mounted
+db:
+
+persistence:
+  backup:
+    size: 5Gi
+    mountPath: /backups/
+    storageClassName: netapp-file-backup
+    storageAccessMode: ReadWriteOnce
+  verification:
+    size: 1Gi
+    mountPath: /var/lib/mongodb/data
+    storageClassName: netapp-block-standard
+    storageAccessMode: ReadWriteOnce
+
+env:
+  BACKUP_STRATEGY:
+    value: "rolling"
+    secure: false
+  BACKUP_DIR:
+    value: "/backups/"
+  BACKUP_CONF:
+    value: "/conf/backup.conf"
+  NUM_BACKUPS:
+    value: ""
+  DAILY_BACKUPS:
+    value: "2"
+  WEEKLY_BACKUPS:
+    value: "1"
+  MONTHLY_BACKUPS:
+    value: "0"
+  BACKUP_PERIOD:
+    value: ""
+  MONGODB_AUTHENTICATION_DATABASE:
+    value: "orgbook-publisher"
+  ORGBOOK_PUBLISHER_MONGODB_HEADLESS_USER:
+    value: "orgbook-publisher"
+  ORGBOOK_PUBLISHER_MONGODB_HEADLESS_PASSWORD:
+    existingSecret:
+      name: "orgbook-publisher-mongodb"
+      key: "mongodb-passwords"
+  TAG_NAME:
+    value: prod
+  WEBHOOK_URL:
+    value: ""
+    secure: true
+  ENVIRONMENT_NAME:
+    value: "8ad0ea-prod"
+  ENVIRONMENT_FRIENDLY_NAME:
+    value: "OrgBook MongoDb Backup (prod)"
+
+networkPolicy:
+  enabled: true
