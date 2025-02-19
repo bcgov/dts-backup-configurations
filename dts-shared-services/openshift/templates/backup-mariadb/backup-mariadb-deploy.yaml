@@ -82,8 +82,8 @@ objects:
       webhook-url: ${WEBHOOK_URL}
       webhook-url-host: ${WEBHOOK_URL_HOST}
 
-  - kind: DeploymentConfig
-    apiVersion: v1
+  - kind: Deployment
+    apiVersion: apps/v1
     metadata:
       name: ${NAME}
       labels:
@@ -95,20 +95,10 @@ objects:
     spec:
       strategy:
         type: Recreate
-      triggers:
-        - type: ConfigChange
-        - type: ImageChange
-          imageChangeParams:
-            automatic: true
-            containerNames:
-              - ${NAME}
-            from:
-              kind: ImageStreamTag
-              namespace: ${IMAGE_NAMESPACE}
-              name: ${SOURCE_IMAGE_NAME}:${TAG_NAME}
       replicas: 1
       selector:
-        name: ${NAME}
+        matchLabels:
+          name: ${NAME}
       template:
         metadata:
           name: ${NAME}
@@ -134,7 +124,7 @@ objects:
                     path: ${CONFIG_FILE_NAME}
           containers:
             - name: ${NAME}
-              image: ""
+              image: image-registry.openshift-image-registry.svc:5000/${IMAGE_NAMESPACE}/${NAME}:${TAG_NAME}
               ports: []
               env:
                 - name: BACKUP_STRATEGY

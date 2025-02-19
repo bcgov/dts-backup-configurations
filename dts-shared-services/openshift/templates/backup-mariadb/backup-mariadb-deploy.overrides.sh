@@ -18,7 +18,7 @@ CONFIG_MAP_NAME=${CONFIG_MAP_NAME:-backup-conf}
 SOURCE_FILE=../config/backup-mariadb/backup.conf
 
 OUTPUT_FORMAT=json
-OUTPUT_FILE=${CONFIG_MAP_NAME}-configmap_DeploymentConfig.json
+OUTPUT_FILE=${CONFIG_MAP_NAME}-configmap_Deployment.json
 
 printStatusMsg "Generating ConfigMap; ${CONFIG_MAP_NAME} ..."
 generateConfigMap "${CONFIG_MAP_NAME}" "${SOURCE_FILE}" "${OUTPUT_FORMAT}" "${OUTPUT_FILE}"

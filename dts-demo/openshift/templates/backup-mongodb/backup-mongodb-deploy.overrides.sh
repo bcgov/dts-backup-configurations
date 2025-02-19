@@ -18,7 +18,7 @@ CONFIG_MAP_NAME=${CONFIG_MAP_NAME:-backup-conf}
 SOURCE_FILE=../config/backup-mongodb/backup.conf
 
 OUTPUT_FORMAT=json
-OUTPUT_FILE=${NAME}-conf-configmap_DeploymentConfig.json
+OUTPUT_FILE=${NAME}-conf-configmap_Deployment.json
 
 printStatusMsg "Generating ConfigMap; ${CONFIG_MAP_NAME} ..."
 generateConfigMap "${NAME}-conf" "${SOURCE_FILE}" "${OUTPUT_FORMAT}" "${OUTPUT_FILE}"
